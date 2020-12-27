@@ -32,20 +32,32 @@ public class Klijent implements Runnable {
 //			idemo sa jednom petljom koja obradjuje primljene poruke
 			while (true) {
 				String input = tokSaServera.readLine();
+				if(input == null) {
+					System.err.println("Server se ne odaziva, mora doći do prekida rada aplikacije!");
+					slanjePoruka.interrupt();
+					komunikacioniSoket.close();
+					tokKaServeru.close();
+					tokSaServera.close();
+					unosSaTastature.close();
+					System.exit(0);
+				}
 //				ispis na konzoli
 				System.out.println(input);
-//				if (input.equals("Odjava...")) {
-//					break;
-//				}
+				if (input.equals("KRAJ_RADA")) {
+					System.out.println("Napustili ste aplikaciju");
+					slanjePoruka.interrupt();
+					komunikacioniSoket.close();
+					tokKaServeru.close();
+					tokSaServera.close();
+					unosSaTastature.close();
+					System.exit(0);
+				}
+
 			}
-//			System.out.println("----------------\nPrekid rada...\n-----------------");
-////			ocu ovde da utepam ovaj thread samo onda kad server to kaze, 
-//			slanjePoruka.interrupt();
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch(NullPointerException npe) {
-			System.err.println("Greska, null pinter" + npe.getMessage());
+			System.err.println("Greska, null pointer" + npe.getMessage());
 		}
 	}
 
@@ -59,9 +71,6 @@ public class Klijent implements Runnable {
 				poruka = unosSaTastature.readLine();
 //				sad to treba da posaljemo
 				tokKaServeru.println(poruka);
-
-//				ako korisnik bilo kad unese '*quit*' raskida vezu sa serverom
-				if(poruka.equals("*quit*")) break;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
