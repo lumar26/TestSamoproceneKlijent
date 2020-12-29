@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.ConnectException;
 import java.net.Socket;
 
 public class Klijent implements Runnable {
@@ -32,15 +33,6 @@ public class Klijent implements Runnable {
 //			idemo sa jednom petljom koja obradjuje primljene poruke
 			while (true) {
 				String input = tokSaServera.readLine();
-				if(input == null) {
-					System.err.println("Server se ne odaziva, mora doći do prekida rada aplikacije!");
-					slanjePoruka.interrupt();
-					komunikacioniSoket.close();
-					tokKaServeru.close();
-					tokSaServera.close();
-					unosSaTastature.close();
-					System.exit(0);
-				}
 //				ispis na konzoli
 				System.out.println(input);
 				if (input.equals("KRAJ_RADA")) {
@@ -50,12 +42,12 @@ public class Klijent implements Runnable {
 					tokKaServeru.close();
 					tokSaServera.close();
 					unosSaTastature.close();
-					System.exit(0);
+					return;
 				}
 
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Nije uspostavljena konekcija sa serverom. Prekid aplikacije...");
 		} catch(NullPointerException npe) {
 			System.err.println("Greska, null pointer" + npe.getMessage());
 		}
